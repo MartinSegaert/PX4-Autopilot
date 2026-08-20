@@ -89,6 +89,8 @@ px4_add_romfs_files(
 	4020_gz_tiltrotor
 	4021_gz_x500_flow
 
+	4026_gz_tl4q990_3d_lidar
+
 	5001_xplane_cessna172
 	5002_xplane_tb2
 	5010_xplane_ehang184
