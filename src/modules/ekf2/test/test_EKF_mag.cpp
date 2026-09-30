@@ -105,6 +105,22 @@ TEST_F(EkfMagTest, fusionStartWithReset)
 	EXPECT_NEAR(degrees(mag_incl), mag_incl_wmm_deg, 1e-5f);
 }
 
+TEST_F(EkfMagTest, configuredDeclinationWithoutSaveBit)
+{
+	// EKF2_DECL_TYPE=0 means use EKF2_MAG_DECL without geographic lookup or
+	// saving a WMM value over the configured simulation correction.
+	constexpr float declination_deg = 3.98f;
+	parameters *params = _ekf->getParamHandle();
+	params->ekf2_decl_type = 0;
+	params->ekf2_mag_decl = declination_deg;
+
+	const Vector3f mag_data(0.2f, 0.f, 0.4f);
+	_sensor_simulator._mag.setData(mag_data);
+	_sensor_simulator.runSeconds(_init_duration_s);
+
+	EXPECT_NEAR(_ekf_wrapper.getYawAngle(), radians(declination_deg), radians(1.f));
+}
+
 TEST_F(EkfMagTest, noInitLargeStrength)
 {
 	// GIVEN: a really large magnetic field

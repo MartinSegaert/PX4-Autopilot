@@ -399,10 +399,11 @@ void GZBridge::magnetometerCallback(const gz::msgs::Magnetometer &msg)
 
 	_px4_mag.set_temperature(_temperature); // this will be static if no airspeed sensor is on the model.
 
-	// FIXME: once we're on jetty or later
-	// The magnetometer plugin publishes in units of gauss and in a weird left handed coordinate system
-	// https://github.com/gazebosim/gz-sim/pull/2460
-	_px4_mag.update(timestamp, -msg.field_tesla().y(), -msg.field_tesla().x(), msg.field_tesla().z());
+	// The simulator is configured to publish the field in its ENU / body-FLU
+	// frame, while PX4 consumes body FRD. Harmonic still reports gauss through
+	// the field_tesla protobuf member; use_units_gauss is kept enabled until
+	// Jetty's corrected units are adopted.
+	_px4_mag.update(timestamp, msg.field_tesla().x(), -msg.field_tesla().y(), -msg.field_tesla().z());
 }
 
 void GZBridge::airPressureCallback(const gz::msgs::FluidPressure &msg)

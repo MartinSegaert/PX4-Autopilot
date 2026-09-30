@@ -256,10 +256,10 @@ void Ekf::controlMagFusion(const imuSample &imu_sample)
 							// using declination from the world magnetic model
 							fuseDeclination(_wmm_declination_rad, R_DECL, update_all_states, update_tilt);
 
-						} else if ((_params.ekf2_decl_type & GeoDeclinationMask::SAVE_GEO_DECL)
+						} else if (!(_params.ekf2_decl_type & GeoDeclinationMask::USE_GEO_DECL)
 							   && PX4_ISFINITE(_params.ekf2_mag_decl) && (fabsf(_params.ekf2_mag_decl) > 0.f)
 							  ) {
-							// using previously saved declination
+							// using configured or previously saved declination
 							fuseDeclination(math::radians(_params.ekf2_mag_decl), R_DECL, update_all_states, update_tilt);
 
 						} else {
@@ -618,10 +618,10 @@ float Ekf::getMagDeclination()
 		// if available use value returned by geo library
 		return _wmm_declination_rad;
 
-	} else if ((_params.ekf2_decl_type & GeoDeclinationMask::SAVE_GEO_DECL)
+	} else if (!(_params.ekf2_decl_type & GeoDeclinationMask::USE_GEO_DECL)
 		   && PX4_ISFINITE(_params.ekf2_mag_decl) && (fabsf(_params.ekf2_mag_decl) > 0.f)
 		  ) {
-		// using saved mag declination
+		// using configured or previously saved mag declination
 		return math::radians(_params.ekf2_mag_decl);
 	}
 
